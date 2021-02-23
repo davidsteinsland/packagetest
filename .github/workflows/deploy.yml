@@ -1,0 +1,51 @@
+name: Deploy
+on:
+  registry_package:
+    types: [ published ] # event payload: https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#package
+
+jobs:
+  dev-fss:
+    name: dev-fss
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: echo "$EVENT_CONTEXT"
+      - name: Fetch sources
+        uses: actions/checkout@v2
+      - name: Check dev-fss existence
+        id: dev_fss
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "config/${{ github.event.package.name }}/dev-fss.yml"
+      - name: deploy
+        if: steps.dev_fss.outputs.files_exists == 'true'
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: config/nais.yml
+          VARS: config/${{ github.event.package.name }}/dev-fss.yml
+          IMAGE: ${{ github.event.package.name }}:${{ github.event.package_version.version }}
+
+  prod-fss:
+    name: prod-fss
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch sources
+        uses: actions/checkout@v2
+      - name: Check prod-fss existence
+        id: dev_fss
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "config/${{ github.event.package.name }}/prod-fss.yml"
+      - name: deploy
+        if: steps.dev_fss.outputs.files_exists == 'true'
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: config/nais.yml
+          VARS: config/${{ github.event.package.name }}/prod-fss.yml
+          IMAGE: ${{ github.event.package.name }}:${{ github.event.package_version.version }}
