@@ -6,19 +6,24 @@ on:
 jobs:
   dev-fss:
     name: dev-fss
+    if: ${{ github.event.registry_package.package_type == 'docker }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: echo "$EVENT_CONTEXT"
+      - name: Dump GitHub sha
+        run: echo "$GITHUB_SHA"
+      - name: Dump GitHub ref
+        run: echo "$GITHUB_REF"
       - name: Fetch sources
         uses: actions/checkout@v2
       - name: Check dev-fss existence
         id: dev_fss
         uses: andstor/file-existence-action@v1
         with:
-          files: "config/${{ github.event.package.name }}/dev-fss.yml"
+          files: "config/${{ github.event.registry_package.name }}/dev-fss.yml"
       - name: deploy
         if: steps.dev_fss.outputs.files_exists == 'true'
         uses: nais/deploy/actions/deploy@v1
@@ -26,8 +31,8 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: config/nais.yml
-          VARS: config/${{ github.event.package.name }}/dev-fss.yml
-          IMAGE: ${{ github.event.package.name }}:${{ github.event.package_version.version }}
+          VARS: config/${{ github.event.registry_package.name }}/dev-fss.yml
+          IMAGE: ${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
 
   prod-fss:
     name: prod-fss
@@ -39,7 +44,7 @@ jobs:
         id: dev_fss
         uses: andstor/file-existence-action@v1
         with:
-          files: "config/${{ github.event.package.name }}/prod-fss.yml"
+          files: "config/${{ github.event.registry_package.name }}/prod-fss.yml"
       - name: deploy
         if: steps.dev_fss.outputs.files_exists == 'true'
         uses: nais/deploy/actions/deploy@v1
@@ -47,5 +52,5 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
           RESOURCE: config/nais.yml
-          VARS: config/${{ github.event.package.name }}/prod-fss.yml
-          IMAGE: ${{ github.event.package.name }}:${{ github.event.package_version.version }}
+          VARS: config/${{ github.event.registry_package.name }}/prod-fss.yml
+          IMAGE: ${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
