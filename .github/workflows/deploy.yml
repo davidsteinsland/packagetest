@@ -4,19 +4,13 @@ on:
     types: [ published ] # event payload: https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#package
 
 env:
-  DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
+  DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/${{ github.event.registry_package.name }}:${{ github.event.registry_package.package_version.version }}
 jobs:
   dev-fss:
     name: dev-fss
     if: github.event.registry_package.package_type == 'docker'
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-        run: echo "$EVENT_CONTEXT"
-      - name: Dump Docker tag
-        run: echo "$DOCKER_IMAGE"
       - name: Fetch sources
         uses: actions/checkout@v2
 
@@ -33,7 +27,7 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: config/nais.yml
           VARS: config/${{ github.event.registry_package.name }}/dev-fss.yml
-          IMAGE: ${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
+          IMAGE: ${{ env.DOCKER_IMAGE }}
 
   prod-fss:
     name: prod-fss
@@ -54,4 +48,4 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: config/nais.yml
           VARS: config/${{ github.event.registry_package.name }}/prod-fss.yml
-          IMAGE: ${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
+          IMAGE: ${{ env.DOCKER_IMAGE }}
