@@ -6,7 +6,7 @@ on:
 jobs:
   dev-fss:
     name: dev-fss
-    if: ${{ github.event.registry_package.package_type == 'docker }}
+    if: github.event.registry_package.package_type == 'docker'
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
