@@ -3,6 +3,8 @@ on:
   registry_package:
     types: [ published ] # event payload: https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads#package
 
+env:
+  DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/${{ github.event.registry_package.name }}:${{ github.event.package_version.version }}
 jobs:
   dev-fss:
     name: dev-fss
@@ -13,12 +15,11 @@ jobs:
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: echo "$EVENT_CONTEXT"
-      - name: Dump GitHub sha
-        run: echo "$GITHUB_SHA"
-      - name: Dump GitHub ref
-        run: echo "$GITHUB_REF"
+      - name: Dump Docker tag
+        run: echo "DOCKER_IMAGE"
       - name: Fetch sources
         uses: actions/checkout@v2
+
       - name: Check dev-fss existence
         id: dev_fss
         uses: andstor/file-existence-action@v1
