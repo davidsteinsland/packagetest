@@ -1,5 +1,7 @@
 on: push
-
+env:
+  APP: hello
+  EXTRA: app=${{ env.APP }}
 jobs:
   one:
     name: One name
@@ -7,7 +9,7 @@ jobs:
     steps:
       - name: Dump GitHub context2
         env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          GITHUB_CONTEXT: ${{ toJSON(env) }}
         run: echo "$GITHUB_CONTEXT"
       - name: Dump job context
         env:
