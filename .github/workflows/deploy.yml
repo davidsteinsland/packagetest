@@ -16,7 +16,7 @@ jobs:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: echo "$EVENT_CONTEXT"
       - name: Dump Docker tag
-        run: echo "DOCKER_IMAGE"
+        run: echo "$DOCKER_IMAGE"
       - name: Fetch sources
         uses: actions/checkout@v2
 
