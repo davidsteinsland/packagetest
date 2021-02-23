@@ -6,7 +6,7 @@ jobs:
     name: One name
     runs-on: ubuntu-latest
     env:
-      EXTRA: app=${{ env.APP }}
+      EXTRA: app=${{ APP }}
     steps:
       - name: Dump GitHub context2
         env:
