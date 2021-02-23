@@ -5,8 +5,10 @@ jobs:
   one:
     name: One name
     runs-on: ubuntu-latest
+    matrix:
+      app: [one, two]
     env:
-      EXTRA: app=${{ APP }}
+      EXTRA: ${{ matrix.app }}
     steps:
       - name: Dump GitHub context2
         env:
