@@ -11,7 +11,12 @@ jobs:
     env:
       EXTRA: ${{ matrix.app }}
     steps:
-      - name: Dump GitHub context2
+      - name: Dump Github Context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+       
+      - name: Dump Env
         env:
           GITHUB_CONTEXT: ${{ toJSON(env) }}
         run: echo "$GITHUB_CONTEXT"
