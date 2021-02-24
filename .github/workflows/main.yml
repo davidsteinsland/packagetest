@@ -10,6 +10,7 @@ jobs:
         cluster:
           - dev-fss
           - prod-fss
+        app: []
         include:
           - cluster: dev-fss
             app: aareg
