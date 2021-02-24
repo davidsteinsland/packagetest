@@ -5,8 +5,9 @@ jobs:
   one:
     name: One name
     runs-on: ubuntu-latest
-    matrix:
-      app: [one, two]
+    strategy:
+      matrix:
+        app: [one, two]
     env:
       EXTRA: ${{ matrix.app }}
     steps:
